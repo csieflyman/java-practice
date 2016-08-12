@@ -1,0 +1,29 @@
+allprojects {
+    Closure cl = { task -> println "I'm $task.project.name" }
+    task projname << cl
+}
+
+subprojects {
+    apply plugin: 'java'
+    ext {
+        maven_group_id = 'com.practice.java'
+        maven_artifact_id = 'basic'
+        maven_version = '1.0-SNAPSHOT'
+    }
+    //apply plugin: 'maven'
+    //apply from: 'mvn.gradle'
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.21'
+        testCompile 'junit:junit:4.12'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    projname << { task -> println "I'm $task.project.name overrided by subproject" }
+}

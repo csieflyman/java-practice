@@ -1,0 +1,17 @@
+file(".").eachDir { profile ->
+    if (profile.name =~ /profile_/) {
+        def key = profile.name - "profile_"
+        task "pack_${key}"(dependsOn:clean, group:'Package', type:Zip)  {
+            baseName = project.name + "_" + key
+            into (project.name + '/libs') {
+                from configurations.compile
+                from jar.outputs.files
+            }
+            into (project.name) {
+                from file("./scripts").listFiles()
+                from profile.listFiles()
+            }
+        }
+    }
+}
+task pack(dependsOn: tasks.matching { it.name =~ /pack_/} )
